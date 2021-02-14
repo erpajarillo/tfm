@@ -17,9 +17,9 @@ app.get('/', async (req, res) => {
     res.send(response)
 });
 
-// const port = 3001;
-// app.listen(port, () => {
-//     console.log("Listening");
-// })
+const port = 3001;
+app.listen(port, () => {
+    console.log("Listening");
+})
 
-exports.lambdaHandler = serverless(app);
+// exports.lambdaHandler = serverless(app);

@@ -1,6 +1,10 @@
 import axios from  'axios';
 import AWS from 'aws-sdk';
+import {Kafka} from 'kafkajs';
 import {config} from './config';
+import {Logger} from './logs';
+
+const log = new Logger();
 
 export class imgScrapper {
 
@@ -15,6 +19,13 @@ export class imgScrapper {
     }
 
     scrape = async () => {
+        log.send('info', {
+            msg:'Scrapping Started',
+            cameraList: this.cameraList,
+            pathUrl: this.pathUrl,
+            totalCameras: this.totalCameras
+        });
+
         let res: { msg: string; status: boolean };
         res = {msg: 'OK', status: true};
         let cameraNumber = 1;
@@ -30,6 +41,13 @@ export class imgScrapper {
             cameraNumber += 1;
         } while(cameraNumber <= this.totalCameras && res.status);
 
+        log.send('info', {
+            msg: 'Scrapping Ended',
+            cameraList: this.cameraList,
+            pathUrl: this.pathUrl,
+            totalCameras: this.totalCameras
+        });
+
         return res;
     }
 }
@@ -40,12 +58,14 @@ const getCameraName = (cameraNumber: number) => {
 
 const downloadImage = async (url: string, imgName: string) => {
     let res: { msg: string; status: boolean };
-    console.log(url);
+
     res = await axios({url: url, method: 'GET', responseType: 'stream'})
         .then(async(response) => {
+            log.send('info', {msg: 'Image Downloaded', url, imgName});
             return await putImageToS3(imgName, response);
         })
         .catch(err => {
+            log.send('error', {msg: 'Image Download Failed', url, imgName, err});
             return {status: false, msg: `Error downloading image. Error: ${err}`};
         });
 
@@ -61,19 +81,41 @@ const putImageToS3 = async (fileName: string, response: any) => {
 
     const s3 = new AWS.S3();
     const params = {
-        Bucket : 'images-tfm',
-        Key : fileName,
-        Body : response.data,
+        Bucket: `${config.S3Bucket}`,
+        Key: fileName,
+        Body: response.data,
         ContentType: response.headers['content-type'],
         ContentLength: response.headers['content-length'],
         // ACL: 'public-read'
     }
 
-    s3.putObject(params, (err, data) => {
+    await s3.putObject(params, (err, data) => {
         if (err) {
+            log.send('error', {msg: 'Error storing image', fileName, bucket: config.S3Bucket, err});
             return {status: false, msg: `Error storing image. Error: ${err}`};
         }
     });
 
+    log.send('info', {msg: 'Image Uploaded', fileName, bucket: config.S3Bucket});
     return {status: true, msg: `Image Uploaded`};
+}
+
+const sendEventToKafka = async () => {
+    const kafka = new Kafka({
+        clientId: 'my-app',
+        brokers: ['kafka1:9092', 'kafka2:9092']
+    });
+
+    const producer = kafka.producer();
+
+    await producer.connect();
+
+    await producer.send({
+        topic: 'images',
+        messages: [
+            { value: 'Hello KafkaJS user!' },
+        ],
+    });
+
+    await producer.disconnect();
 }

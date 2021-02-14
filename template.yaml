@@ -22,12 +22,31 @@ Parameters:
     Description: "Required. Region"
     Type: "String"
     Default: "{{resolve:ssm:region:1}}"
+  LogglyKey:
+    Description: "Required. Loggly"
+    Type: "String"
+    Default: "{{resolve:ssm:logglyKey:1}}"
+  S3Bucket:
+    Description: "Required. S3 Bucket"
+    Type: "String"
+    Default: "{{resolve:ssm:S3Bucket:1}}"
 
 Resources:
   S3Images:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: images-tfm
+#  KafkaCluster:
+#    Type: 'AWS::MSK::Cluster'
+#    Properties:
+#      ClusterName: kafka-tfm
+#      KafkaVersion: 2.2.1
+#      NumberOfBrokerNodes: 1
+#      BrokerNodeGroupInfo:
+#        InstanceType: kafka.t3.small
+#        ClientSubnets:
+#          - subnet-41191127
+#          - subnet-487e6500
   RootService:
     Type: AWS::Serverless::Function
     Properties:
@@ -39,6 +58,7 @@ Resources:
           AccessKey: !Ref AccessKey
           SecretKey: !Ref SecretKey
           AWSRegion: !Ref AWSRegion
+          LogglyKey: !Ref LogglyKey
       Policies:
         - S3CrudPolicy:
             BucketName: !Ref S3Images
