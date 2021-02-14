@@ -7,13 +7,14 @@ const imgScrap = new imgScrapper();
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
+app.get('/test', (req, res) => {
     res.status(200).json("Get: Index");
 });
 
-app.get('/test', (req, res) => {
-    const response = imgScrap.scrape();
-    res.status(200).json(response);
+app.get('/', async (req, res) => {
+    const response = await imgScrap.scrape();
+    // res.status(200).send(response);
+    res.send(response)
 });
 
 // const port = 3001;

@@ -9,3 +9,4 @@ region = "eu-west-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 image_repositories = ["RootService=019249439598.dkr.ecr.eu-west-1.amazonaws.com/tfm"]
+parameter_overrides = "AccessKey=\"{{resolve:ssm:accessKey:1}}\" SecretKey=\"{{resolve:ssm:secretKey:1}}\" AWSRegion=\"{{resolve:ssm:region:1}}\""

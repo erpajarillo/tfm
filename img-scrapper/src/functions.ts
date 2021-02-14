@@ -66,7 +66,7 @@ const putImageToS3 = async (fileName: string, response: any) => {
         Body : response.data,
         ContentType: response.headers['content-type'],
         ContentLength: response.headers['content-length'],
-        ACL: 'public-read'
+        // ACL: 'public-read'
     }
 
     s3.putObject(params, (err, data) => {
