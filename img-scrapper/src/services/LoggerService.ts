@@ -1,5 +1,5 @@
 import winston from 'winston';
-import {config} from "./config";
+import {config} from "../config";
 const {Loggly} = require('winston-loggly-bulk');
 
 export class Logger {
@@ -18,6 +18,6 @@ export class Logger {
     }
 
     send = (type: string, content: object) => {
-        winston.log(type, `[${this.appName}] ${content}`);
+        winston.log(type, {...content, appName: this.appName});
     }
 }

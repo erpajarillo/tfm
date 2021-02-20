@@ -1,9 +1,10 @@
 import {Kafka} from "kafkajs";
-import {config} from "./config";
+import {config} from "../config";
 import {SentryService} from './SentryService';
 import {Logger} from './LoggerService';
+import {EventServiceInterface} from "../interfaces/Interfaces";
 
-export class KafkaService {
+export class KafkaService implements EventServiceInterface {
 
     private kafka;
     private readonly topic;
@@ -43,8 +44,8 @@ export class KafkaService {
         await consumer.connect();
 
         await consumer.subscribe({ topic: this.topic, fromBeginning: true })
-            .then((response) => {
-                this.log.send('info', {msg: `Kafka: A consumer has been subscribed to topic ${this.topic}`, topic: this.topic, response});
+            .then((res) => {
+                this.log.send('info', {msg: `Kafka: A consumer has been subscribed to topic ${this.topic}`, topic: this.topic, res});
             })
             .catch(err => {
                 this.log.send('error', {msg: `Kafka: Error subscribing to topic ${this.topic}`, err});

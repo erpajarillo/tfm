@@ -1,7 +1,8 @@
 import * as Sentry from "@sentry/serverless";
-import {config} from "./config";
+import {config} from "../config";
+import {ExceptionServiceInterface} from "../interfaces/Interfaces";
 
-export class SentryService {
+export class SentryService implements ExceptionServiceInterface{
     constructor() {
         Sentry.AWSLambda.init({
             dsn: config.SentryDNS,

@@ -20,12 +20,8 @@ app.get('/test', (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    try {
-        const response = await imgScrap.scrape();
-        res.status(200).json(response);
-    } catch(err) {
-        Sentry.captureException(err);
-    }
+    const response = await imgScrap.scrape();
+    res.status(200).json(response);
 });
 
 // const port = 3000;
