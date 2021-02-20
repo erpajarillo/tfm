@@ -4,6 +4,8 @@ const {Loggly} = require('winston-loggly-bulk');
 
 export class Logger {
 
+    private readonly appName;
+
     constructor() {
         winston.add(new Loggly({
             token: config.LogglyKey,
@@ -11,9 +13,11 @@ export class Logger {
             tags: ["Winston-NodeJS"],
             json: true
         }));
+
+        this.appName = 'img-scrapper';
     }
 
     send = (type: string, content: object) => {
-        winston.log(type, content);
+        winston.log(type, `[${this.appName}] ${content}`);
     }
 }

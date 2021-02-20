@@ -1,10 +1,17 @@
-import axios from  'axios';
+import axios from 'axios';
 import AWS from 'aws-sdk';
 import {Kafka} from 'kafkajs';
 import {config} from './config';
-import {Logger} from './logs';
+import {Logger} from './LoggerService';
+import * as Sentry from "@sentry/serverless";
 
 const log = new Logger();
+
+Sentry.AWSLambda.init({
+    dsn: config.SentryDNS,
+    environment: config.AppEnv,
+    tracesSampleRate: 1.0,
+});
 
 export class imgScrapper {
 
@@ -66,6 +73,7 @@ const downloadImage = async (url: string, imgName: string) => {
         })
         .catch(err => {
             log.send('error', {msg: 'Image Download Failed', url, imgName, err});
+            Sentry.captureException(err);
             return {status: false, msg: `Error downloading image. Error: ${err}`};
         });
 
@@ -89,10 +97,13 @@ const putImageToS3 = async (fileName: string, response: any) => {
         // ACL: 'public-read'
     }
 
-    await s3.putObject(params, (err, data) => {
+    s3.putObject(params, (err, data) => {
         if (err) {
+            Sentry.captureException(err);
             log.send('error', {msg: 'Error storing image', fileName, bucket: config.S3Bucket, err});
             return {status: false, msg: `Error storing image. Error: ${err}`};
+        } else {
+            sendEventToKafka(fileName);
         }
     });
 
@@ -100,22 +111,42 @@ const putImageToS3 = async (fileName: string, response: any) => {
     return {status: true, msg: `Image Uploaded`};
 }
 
-const sendEventToKafka = async () => {
-    const kafka = new Kafka({
-        clientId: 'my-app',
-        brokers: ['kafka1:9092', 'kafka2:9092']
+const connectKafkaBroker = async() => {
+    return new Kafka({
+        clientId: `${config.KafkaClient}`,
+        brokers: [`${config.KafkaBroker}`]
     });
+}
 
-    const producer = kafka.producer();
+const sendEventToKafka = async (fileName: string) => {
+    try {
+        const kafka = await connectKafkaBroker();
 
-    await producer.connect();
+        const producer = kafka.producer();
 
-    await producer.send({
-        topic: 'images',
-        messages: [
-            { value: 'Hello KafkaJS user!' },
-        ],
-    });
+        await producer.connect();
 
-    await producer.disconnect();
+        await producer.send({
+            topic: 'images',
+            messages: [
+                {
+                    key: 'fileName',
+                    value: fileName,
+                    headers: {
+                        fileName: 'true',
+                        date: `${new Date().toISOString()}`,
+
+                    }
+                }
+            ]
+        })
+            .then((response) => {
+                log.send('info', {msg: 'Event sent to Kafka', fileName, response});
+            });
+
+        await producer.disconnect();
+    } catch(err) {
+        Sentry.captureException(err);
+        log.send('error', {msg: 'Error sending event to Kafka', fileName, err});
+    }
 }
