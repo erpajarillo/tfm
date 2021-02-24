@@ -43,7 +43,7 @@ Parameters:
   KafkaBroker:
     Description: "Required. Kafka Broker IP & Port"
     Type: "String"
-    Default: "{{resolve:ssm:KafkaBroker:2}}"
+    Default: "{{resolve:ssm:KafkaBroker:3}}"
   KafkaClient:
     Description: "Required. Kafka Client"
     Type: "String"
