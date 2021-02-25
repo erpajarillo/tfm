@@ -3,12 +3,19 @@ import {config} from "../config";
 import {SentryService} from './SentryService';
 import {Logger} from './LoggerService';
 import {EventServiceInterface} from "../interfaces/Interfaces";
+import {pollutionCalculator} from "../functions";
+
+interface responseKafkaInterface {
+    value: any,
+    headers: any
+}
 
 export class KafkaService implements EventServiceInterface {
 
     private kafka;
     private log;
     private sentry;
+    private pollCalc;
 
     constructor() {
         this.kafka = new Kafka({
@@ -17,6 +24,7 @@ export class KafkaService implements EventServiceInterface {
         });
         this.log = new Logger();
         this.sentry = new SentryService();
+        this.pollCalc = new pollutionCalculator();
     }
 
     produce = async (topic: string, value: string, headers: {}) => {
@@ -37,7 +45,7 @@ export class KafkaService implements EventServiceInterface {
     }
 
     consume = async(topic: string) => {
-        const response = <any>[];
+        let response: responseKafkaInterface;
         const consumer = this.kafka.consumer({ groupId: 'tfm-group' });
         await consumer.connect();
 
@@ -52,10 +60,13 @@ export class KafkaService implements EventServiceInterface {
 
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-                response.push([{value: message.value, headers: message.headers}]);
+                console.log(message);
+                response = {
+                    value: message.toString(),
+                    headers: message.headers
+                }
+                // await this.pollCalc.calculate(message);
             }
         });
-
-        return response;
     }
 }

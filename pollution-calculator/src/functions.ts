@@ -30,19 +30,7 @@ export class pollutionCalculator {
     }
 
     calculate = async () : Promise<calculatePollutionResponseInterface> => {
-
-        // const kafkaData = this.kafka.consume(config.KafkaDetectionTopic ??= 'detections');
-
-        const kafkaData = {
-            url: 'https://www.malaga.eu/recursos/movilidad/camaras_trafico/TV-06.jpg',
-            imageName: '12232434342-06',
-            totalVehicles: '5',
-            totalCars: '3',
-            totalTrucks: '1',
-            totalBuses: '0',
-            totalMotorbikes: '1'
-        }
-
+        const kafkaData = <any>{};
         const totalVehiclesPollution = Number(kafkaData.totalVehicles) * this.CO2Vehicles;
         const totalCarsPollution = Number(kafkaData.totalCars) * this.CO2Cars;
         const totalTrucksPollution = Number(kafkaData.totalTrucks) * this.CO2Trucks;

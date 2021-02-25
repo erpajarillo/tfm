@@ -24,11 +24,11 @@ app.get('/', async (req, res) => {
     res.status(200).json(response);
 });
 
-// const port = 3000;
-// app.listen(port, () => {
-//     console.log("Listening port: " + port);
-// });
-
-exports.lambdaHandler = Sentry.AWSLambda.wrapHandler(serverless(app), {
-    captureTimeoutWarning: false
+const port = 3001;
+app.listen(port, () => {
+    console.log("Listening port: " + port);
 });
+
+// exports.lambdaHandler = Sentry.AWSLambda.wrapHandler(serverless(app), {
+//     captureTimeoutWarning: false
+// });

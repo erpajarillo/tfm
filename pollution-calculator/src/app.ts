@@ -11,12 +11,12 @@ Sentry.AWSLambda.init({
     tracesSampleRate: 1.0,
 });
 
-const pollCall = new pollutionCalculator();
+const pollCalc = new pollutionCalculator();
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/pollution', async (req, res) => {
-    const response = await pollCall.calculate();
+    const response = await pollCalc.calculate();
     res.status(200).json(response);
 });
 
