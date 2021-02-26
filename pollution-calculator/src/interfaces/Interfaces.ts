@@ -13,10 +13,13 @@ export interface CloudServiceInterface {
 }
 
 export interface EventServiceInterface {
-    produce(topic: string, value: string, headers: {}) : any,
-    consume(topic: string) : any
+    produce(topic: string, value: string, headers: {}) : any
 }
 
 export interface ExceptionServiceInterface {
     captureException(err: any) : any
+}
+
+export interface kafkaDataResponse {
+
 }
