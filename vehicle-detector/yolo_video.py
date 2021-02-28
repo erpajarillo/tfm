@@ -41,6 +41,7 @@ def detect_img(yolo):
                               ('imgName', msg.value),
                               (msg.headers[0][0], msg.headers[0][1]),
                               (msg.headers[1][0], msg.headers[1][1]),
+                              ('totalVehicles', b'%d' % total),
                               ('totalCars', b'%d' % r_image['car']),
                               ('totalTrucks', b'%d' % r_image['truck']),
                               ('totalBuses', b'%d' % r_image['bus']),

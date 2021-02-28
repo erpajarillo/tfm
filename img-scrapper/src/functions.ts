@@ -49,6 +49,8 @@ export class imgScrapper {
                             url: url,
                             cameraName: cameraName
                         });
+                        console.log(`Kafka Data sent at ${Date.now()}`);
+                        console.log({url: url, cameraName: cameraName});
                     }
                 }
             }

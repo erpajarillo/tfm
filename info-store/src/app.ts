@@ -1,9 +1,9 @@
-import {pollutionCalculator} from './functions';
+import {infoStore} from './functions';
 
-const pollCalc = new pollutionCalculator();
+const infoStoreService = new infoStore();
 
 const init = async () => {
-    return await pollCalc.calculate()
+    return await infoStoreService.store()
 }
 
 init()

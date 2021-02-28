@@ -6,7 +6,8 @@ export const config = {
     LogglySubdomain: process.env.LogglySubdomain,
     KafkaBroker: process.env.KafkaBroker,
     KafkaClient: process.env.KafkaClient,
-    KafkaDetectionTopic: process.env.KafkaDetectionsTopic,
     KafkaPollutionTopic: process.env.KafkaPollutionTopic,
-    SentryDNS: process.env.SentryDNS
+    SentryDNS: process.env.SentryDNS,
+    MongoConnection: process.env.MongoConnection,
+    DBMongo: process.env.DBMongo
 }
