@@ -1,8 +1,8 @@
-FROM public.ecr.aws/lambda/nodejs:14
+FROM node:14
 
 COPY dist package.json ./
 
 RUN npm install
+RUN npm install pm2 -g
 
-# Command can be overwritten by providing a different command in the template directly.
-CMD ["app.lambdaHandler"]
+CMD ["pm2-runtime", "app.js"]

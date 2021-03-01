@@ -1,9 +1,16 @@
+# Docker
+docker-compose.yml
+
+# Python
+yolov3.weights
+
 # AWS SAM
 .aws-sam
 
 # env
 env.json
 .env
+docker-compose.env
 
 # Intellij
 .idea

@@ -1,0 +1,90 @@
+version: "3"
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENERS=LISTENER_INSIDE://kafka:29092,LISTENER_GENERAL://:9092
+      - KAFKA_ADVERTISED_LISTENERS=LISTENER_INSIDE://kafka:29092,LISTENER_GENERAL://127.0.0.1:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=LISTENER_INSIDE:PLAINTEXT,LISTENER_GENERAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=LISTENER_INSIDE
+    depends_on:
+      - zookeeper
+  img-scrapper:
+    #    build: ./img-scrapper
+    image: 'erpajarillo/img-scrapper:latest'
+    environment:
+      - AppEnv=local
+      - AWSAccessKey=
+      - AWSSecretKey=
+      - AWSRegion=eu-west-1
+      - S3Bucket=images-tfm
+      - KafkaBroker=kafka:29092
+      - KafkaClient=kafka-tfm
+    depends_on:
+      - kafka
+  vehicle-detector:
+    #    build: ./vehicle-detector
+    image: 'erpajarillo/vehicle-detector:latest'
+    environment:
+      - AppEnv=local
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
+      - AWS_DEFAULT_REGION=eu-west-1
+      - S3Bucket=images-tfm
+      - KafkaBroker=kafka:29092
+      - KafkaClient=kafka-tfm
+    depends_on:
+      - kafka
+  pollution-calculator:
+    #    build: ./pollution-calculator
+    image: 'erpajarillo/pollution-calculator:latest'
+    environment:
+      - AppEnv=local
+      - KafkaBroker=kafka:29092
+      - KafkaClient=kafka-tfm
+      - KafkaDetectionsTopic=detections
+      - KafkaPollutionTopic=pollution
+    depends_on:
+      - kafka
+  info-store:
+    #    build: ./info-store
+    image: 'erpajarillo/info-store:latest'
+    environment:
+      - AppEnv=local
+      - KafkaBroker=kafka:29092
+      - KafkaClient=kafka-tfm
+      - KafkaPollutionTopic=pollution
+      - MongoConnection=
+      - DBMongo=tfm
+      - DBCollectionMongo=pollutions
+    depends_on:
+      - kafka
+  webpage-backend:
+    #    build: ./webpage/backend
+    image: 'erpajarillo/webpage-backend:latest'
+    environment:
+      - AppEnv=local
+      - ExpressPort=3000
+      - MongoConnection=
+      - DBMongo=tfm
+      - DBCollectionMongo=pollutions
+  webpage-frontend:
+    #    build: ./webpage/backend
+    image: 'erpajarillo/webpage-frontend:latest'
+    ports:
+      - '5000:5000'
+    environment:
+      - ExpressBackendAPI=webpage-backend:3000
+    depends_on:
+      - webpage-backend
