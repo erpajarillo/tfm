@@ -2,13 +2,10 @@ require('dotenv').config();
 
 export const config = {
     AppEnv: process.env.AppEnv,
-    AccessKey: process.env.AccessKey,
-    SecretKey: process.env.SecretKey,
+    AWSAccessKey: process.env.AWSAccessKey,
+    AWSSecretKey: process.env.AWSSecretKey,
     AWSRegion: process.env.AWSRegion,
-    LogglyKey: process.env.LogglyKey,
-    LogglySubdomain: process.env.LogglySubdomain,
     S3Bucket: process.env.S3Bucket,
     KafkaBroker: process.env.KafkaBroker,
-    KafkaClient: process.env.KafkaClient,
-    SentryDNS: process.env.SentryDNS
+    KafkaClient: process.env.KafkaClient
 }

@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const db = require('./connection');
+import {config} from '../config/config';
 
 export class Measurements {
 
     private readonly dataSchema;
+    private readonly mongoCollection;
 
     constructor() {
         this.dataSchema = new Schema({
@@ -29,30 +31,31 @@ export class Measurements {
         });
 
         this.dataSchema.index({ cameraName: 1, date: -1 });
+        this.mongoCollection = config.DBCollectionMongo ??= 'pollutions';
     }
 
 
     findAll = async () => {
-        const model = mongoose.model('pollutions', this.dataSchema);
+        const model = mongoose.model(this.mongoCollection, this.dataSchema);
         return await model.find({});
     }
 
     findToday = async () => {
         const dateToday = this.buildTodayDate();
 
-        const model = mongoose.model('pollutions', this.dataSchema);
+        const model = mongoose.model(this.mongoCollection, this.dataSchema);
         return await model.find({"date" : { "$gte" : dateToday}});
     }
 
     findAllPerCamera = async () => {
-        const model = mongoose.model('pollutions', this.dataSchema);
+        const model = mongoose.model(this.mongoCollection, this.dataSchema);
         return await model.aggregate([
             this.getGroupByCamera()
         ]);
     }
 
     findAllPerCameraGrouped = async () => {
-        const model = mongoose.model('pollutions', this.dataSchema);
+        const model = mongoose.model(this.mongoCollection, this.dataSchema);
         return await model.aggregate([
             this.getGroupTotal()
         ]);
@@ -61,7 +64,7 @@ export class Measurements {
     findTodayPerCamera = async () => {
         const dateToday = this.buildTodayDate();
 
-        const model = mongoose.model('pollutions', this.dataSchema);
+        const model = mongoose.model(this.mongoCollection, this.dataSchema);
         return await model.aggregate([
             {
                 $match: {

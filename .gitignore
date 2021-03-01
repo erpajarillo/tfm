@@ -1,3 +1,6 @@
+# Docker
+docker-compose.yml
+
 # Python
 yolov3.weights
 
@@ -7,6 +10,7 @@ yolov3.weights
 # env
 env.json
 .env
+docker-compose.env
 
 # Intellij
 .idea

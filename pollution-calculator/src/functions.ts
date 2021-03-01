@@ -1,12 +1,8 @@
-import {Logger} from './services/LoggerService';
-import {SentryService} from "./services/SentryService";
 import {calculatePollutionResponseInterface} from "./interfaces/Interfaces";
 import {config} from "./config";
 import {Kafka} from "kafkajs";
 
 export class pollutionCalculator {
-    private log;
-    private sentry;
     private kafka;
     private readonly kafkaDetectionTopic;
     private readonly kafkaPollutionTopic;
@@ -25,8 +21,6 @@ export class pollutionCalculator {
         this.kafkaDetectionTopic = config.KafkaDetectionTopic ??= 'detections';
         this.kafkaPollutionTopic = config.KafkaPollutionTopic ??= 'pollution';
         this.kafkaGroup = 'detections-group';
-        this.log = new Logger();
-        this.sentry = new SentryService();
         this.CO2Vehicles = 118;
         this.CO2Cars = 100;
         this.CO2Trucks = 161;
@@ -46,7 +40,6 @@ export class pollutionCalculator {
                 const kafkaHeaderResponse = {...kafkaData.headers, ...contaminationData};
 
                 await this.kafkaProducer('pollution', kafkaHeaderResponse);
-                console.log(`Kafka Data sent at ${Date.now()}`);
                 console.log(kafkaHeaderResponse);
             }
         });
@@ -76,15 +69,14 @@ export class pollutionCalculator {
 
         await consumer.subscribe({topic: this.kafkaDetectionTopic, fromBeginning: true})
             .then((res) => {
-                this.log.send('info', {
+                console.log('info', {
                     msg: `Kafka: A consumer has been subscribed to topic ${this.kafkaDetectionTopic}`,
                     topic: this.kafkaDetectionTopic,
                     res
                 });
             })
             .catch(err => {
-                this.log.send('error', {msg: `Kafka: Error subscribing to topic ${this.kafkaDetectionTopic}`, err});
-                this.sentry.captureException(err);
+                console.log('error', {msg: `Kafka: Error subscribing to topic ${this.kafkaDetectionTopic}`, err});
             });
 
         return consumer;
@@ -97,13 +89,12 @@ export class pollutionCalculator {
 
             await producer.send({topic: this.kafkaPollutionTopic, messages: [{value, headers}]})
                 .then((response) => {
-                    this.log.send('info', {msg: 'Kafka: Event sent to Kafka', value, headers, response});
+                    console.log('info', {msg: 'Kafka: Event sent to Kafka', value, headers, response});
                 });
 
             await producer.disconnect();
         } catch (err) {
-            this.log.send('error', {msg: 'Kafka: Error sending event to Kafka', value, headers, err});
-            this.sentry.captureException(err);
+            console.log('error', {msg: 'Kafka: Error sending event to Kafka', value, headers, err});
         }
     }
 }

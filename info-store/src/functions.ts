@@ -1,14 +1,10 @@
-import {Logger} from './services/LoggerService';
-import {SentryService} from "./services/SentryService";
+import {Kafka} from "kafkajs";
 import {storeInfoResponseInterface} from "./interfaces/Interfaces";
 import {config} from "./config";
-import {Kafka} from "kafkajs";
 const mongoose = require('mongoose');
 const Pollution = require('./services/Mongo');
 
 export class infoStore {
-    private log;
-    private sentry;
     private kafka;
     private readonly kafkaPollutionTopic;
     private readonly kafkaGroup;
@@ -20,8 +16,6 @@ export class infoStore {
         });
         this.kafkaPollutionTopic = config.KafkaPollutionTopic ??= 'pollution';
         this.kafkaGroup = 'pollution-group';
-        this.log = new Logger();
-        this.sentry = new SentryService();
     }
 
     store = async (): Promise<storeInfoResponseInterface> => {
@@ -42,15 +36,14 @@ export class infoStore {
 
         await consumer.subscribe({topic: this.kafkaPollutionTopic, fromBeginning: true})
             .then((res) => {
-                this.log.send('info', {
+                console.log('info', {
                     msg: `Kafka: A consumer has been subscribed to topic ${this.kafkaPollutionTopic}`,
                     topic: this.kafkaPollutionTopic,
                     res
                 });
             })
             .catch(err => {
-                this.log.send('error', {msg: `Kafka: Error subscribing to topic ${this.kafkaPollutionTopic}`, err});
-                this.sentry.captureException(err);
+                console.log('error', {msg: `Kafka: Error subscribing to topic ${this.kafkaPollutionTopic}`, err});
             });
 
         return consumer;

@@ -22,7 +22,3 @@ export interface EventServiceInterface {
     produce(value: string, headers: {}) : any,
     consume() : any
 }
-
-export interface ExceptionServiceInterface {
-    captureException(err: any) : any
-}

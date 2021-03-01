@@ -6,7 +6,15 @@ import numpy as np
 from PIL import Image
 from io import BytesIO
 from kafka import KafkaConsumer, KafkaProducer
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+KAKFA_BROKER = os.getenv("KafkaBroker")
+KAFKA_CLIENT = os.getenv("KafkaClient")
+KAFKA_DETECTIONS_TOPIC = os.getenv("KafkaDetectionsTopic")
+KAFKA_IMAGES_TOPIC = os.getenv("KafkaImagesTopic")
+S3_BUCKET = os.getenv("S3Bucket")
 
 def bytes_to_ndarray(bytes):
     bytes_io = bytearray(bytes)
@@ -15,11 +23,11 @@ def bytes_to_ndarray(bytes):
 
 
 def detect_img(yolo):
-    consumer = KafkaConsumer('images', group_id='detect-group', bootstrap_servers=['127.0.0.1:9092'])
+    consumer = KafkaConsumer(KAFKA_IMAGES_TOPIC, group_id='detect-group', bootstrap_servers=[KAKFA_BROKER])
     for msg in consumer:
         try:
             s3 = boto3.resource('s3')
-            bucket = s3.Bucket('images-tfm')
+            bucket = s3.Bucket(S3_BUCKET)
             print(msg.value.decode('UTF-8'))
             file_content = bucket.Object(msg.value.decode('UTF-8')).get()['Body'].read()
 
@@ -35,8 +43,8 @@ def detect_img(yolo):
 
             # Preparar datos para enviar a Kafka
             total = r_image['car'] + r_image['truck'] + r_image['bus'] + r_image['motorbike']
-            producer = KafkaProducer(bootstrap_servers=['127.0.0.1:9092'])
-            producer.send('detections', key=b'total', value=b'%d' % total,
+            producer = KafkaProducer(bootstrap_servers=[KAKFA_BROKER])
+            producer.send(KAFKA_DETECTIONS_TOPIC, key=b'total', value=b'%d' % total,
                           headers=[
                               ('imgName', msg.value),
                               (msg.headers[0][0], msg.headers[0][1]),

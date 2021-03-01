@@ -40,5 +40,5 @@ app.get('/today/cameras', async (req: any, res: any) => {
 
 const port = config.ExpressPort || 3000;
 app.listen(port, () => {
-  console.log(`listening on ${port}`);
+  console.log(`Express listening on ${port}`);
 });

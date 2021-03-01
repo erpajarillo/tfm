@@ -1,45 +1,35 @@
 {
-  "name": "template_game_service",
+  "name": "template_tfm",
   "version": "1.0.0",
-  "description": "Template - Game Service",
+  "description": "Template - TFM",
   "main": "dist/app.js",
-  "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
-  "author": "Kronte",
+  "repository": "https://github.com/erpajarillo/tfm",
+  "author": "Raul Gonzalez Garcia",
   "license": "MIT",
   "dependencies": {
-    "@sentry/serverless": "^6.1.0",
-    "aws-sdk": "^2.839.0",
     "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
-    "buffer": "^4.9.2",
-    "express": "^4.17.1",
+    "dotenv": "^8.2.0",
     "kafkajs": "^1.15.0",
-    "mongoose": "^5.11.18",
-    "serverless-http": "^2.7.0",
-    "winston-loggly-bulk": "^3.1.1"
+    "mongoose": "^5.11.18"
   },
   "scripts": {
     "build": "eslint ./src -c .eslintrc.json --fix",
     "compile": "tsc",
-    "start": "tsc && nodemon dist/app.js",
+    "start": "tsc && node dist/app.js",
     "test": "jest src/tests/unit/"
   },
   "devDependencies": {
     "@jest/globals": "^26.6.2",
     "@tsconfig/node14": "^1.0.0",
-    "@types/aws-lambda": "^8.10.71",
-    "@types/express": "^4.17.11",
     "@types/node": "^14.14.25",
     "@typescript-eslint/eslint-plugin": "^4.14.2",
     "@typescript-eslint/parser": "^4.14.2",
-    "dotenv": "^8.2.0",
     "eslint": "^7.19.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "jest": "^26.6.3",
-    "nodemon": "^2.0.7",
     "typescript": "^4.1.3"
   }
 }
