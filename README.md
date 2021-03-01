@@ -40,31 +40,37 @@ The languages used are `Javascript`, `Node`, `TypeScript`, `Python` and `Vue`.
 
 ### Steps
 
-1. Execute in each service folder the commands:
-```bash
-npm install
-npm run compile
-```
-2. Execute in each service folder:
-```bash
-docker build . -t erpajarillo/{folder-name}:latest
-```
-3. Fill the environment variables `AWSAccessKey`, `AWS_ACCESS_KEY_ID`, `AWSSecretKey`, `AWS_SECRET_ACCESS_KEY` 
+1. Fill the environment variables `AWSAccessKey`, `AWS_ACCESS_KEY_ID`, `AWSSecretKey`, `AWS_SECRET_ACCESS_KEY` 
    and `MongoConnection` in `docker-compose.yml`
-4. Create a S3 bucket called `images-tfm`
-5. In the folder of the file `docker-compose.yml` executes:
+2. Create a S3 bucket called `images-tfm`
+3. In the folder of the file `docker-compose.yml` executes:
 ```bash
 docker-compose up -d
 ```
 
-The first step is necessary to compile TypeScript to JavaScript due to we are going to use the JavaScript files in
-Docker. The second step will create the image of the folder dist with the Javascript files. The third and fourth steps
-are to configure AWS. The fifth step is to build all the Docker network with all the containers.
+Check the logs of each container to see the executions, and the final result can be checked in the frontend
+(http://localhost:5000)
 
 ## Test locally
 
-Build the network with the `docker-compose up -d` command.
-
+1. Execute in each service folder the commands (not necessary in `vehicle-detector` service):
+```bash
+npm install
+npm run compile
+```
+2. Download and copy the following files:
+- [yolo.h5](https://images-tfm.s3-eu-west-1.amazonaws.com/model-files/yolo.h5) -
+  This file contains all the neural network structure and should be copied in the folder `vehicle-detector/model_data`
+- [yolov3.weights](https://images-tfm.s3-eu-west-1.amazonaws.com/model-files/yolov3.weights) -
+  This file contains the weights used by Yolov3 and our model and should be copied in the folder `vehicle-detector`
+3. Execute in each service folder:
+```bash
+docker build . -t erpajarillo/{folder-name}:latest
+```
+4. Fill the environment variables `AWSAccessKey`, `AWS_ACCESS_KEY_ID`, `AWSSecretKey`, `AWS_SECRET_ACCESS_KEY`
+   and `MongoConnection` in `docker-compose.yml`
+5. Create a S3 bucket called `images-tfm`
+6. In the folder of the file `docker-compose.yml` executes:
 ```bash
 docker-compose up -d
 ```
@@ -74,6 +80,34 @@ Check the logs of each container to see the executions, and the final result can
 
 It is possible to execute the containers separately with the only requirement that Kafka needs to be running.
 
+### Build the Docker images from docker-compose.yml
+
+The file `docker-compose.yml` has a commented line for each container.
+```bash
+...  
+  vehicle-detector:
+    #    build: ./vehicle-detector
+    image: 'erpajarillo/vehicle-detector:latest'
+...
+```
+
+It is possible to comment the line with `image: 'erpajarillo/vehicle-detector:latest'` and uncomment the line with
+`build: ./vehicle-detector`. In this way the Docker images will be built at the moment and will not pulled from
+Docker Hub.
+```bash
+...
+  vehicle-detector:
+    build: ./vehicle-detector
+    #     image: 'erpajarillo/vehicle-detector:latest'
+...
+```
+
+Doing this, it is necessary to download the following 2 files:
+- [yolo.h5](https://images-tfm.s3-eu-west-1.amazonaws.com/model-files/yolo.h5) -
+  This file contains all the neural network structure and should be copied in the folder `vehicle-detector/model_data`
+- [yolov3.weights](https://images-tfm.s3-eu-west-1.amazonaws.com/model-files/yolov3.weights) -
+  This file contains the weights used by Yolov3 and our model and should be copied in the folder `vehicle-detector`
+  
 ## Add a container to the application
 
 It is possible to add more containers (services) to the application in the `docker-compose.yml` or outside Docker since
