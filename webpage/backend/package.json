@@ -18,8 +18,8 @@
     "morgan": "^1.9.1"
   },
   "scripts": {
-    "build": "eslint ./src -c .eslintrc.json --fix",
-    "compile": "tsc",
+    "lintern": "eslint ./ -c .eslintrc.json --fix",
+    "build": "tsc",
     "start": "tsc && node dist/app.js",
     "test": "jest src/tests/unit/"
   },

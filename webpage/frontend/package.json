@@ -20,7 +20,7 @@
   },
   "scripts": {
     "dev": "vue-cli-service serve",
-    "compile": "vue-cli-service build",
+    "build": "vue-cli-service build",
     "prod": "serve -s dist",
     "lint": "vue-cli-service lint"
   },
