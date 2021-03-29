@@ -80,7 +80,7 @@ services:
       - DBMongo=tfm
       - DBCollectionMongo=pollutions
   webpage-frontend:
-    #    build: ./webpage/backend
+    #    build: ./webpage/frontend
     image: 'erpajarillo/webpage-frontend:latest'
     ports:
       - '5000:5000'

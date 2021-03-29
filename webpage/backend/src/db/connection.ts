@@ -4,7 +4,7 @@ import {config} from '../config/config';
 mongoose.connect(config.MongoConnection,
     {
         useNewUrlParser: true,
-        seUnifiedTopology: true,
+        useUnifiedTopology: true,
         dbName: config.DBMongo
     });
 
