@@ -185,8 +185,8 @@ class YOLO(object):
         print(end - start)
 
         # Devolver imagen o datos
-        return image
-        # return result
+        # return image
+        return result
 
     def close_session(self):
         self.sess.close()

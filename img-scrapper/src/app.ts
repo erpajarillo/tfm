@@ -24,7 +24,7 @@ const init = async () => {
   console.log("Scrapper Started!");
   const scrapper = new ImageScrapperController();
 
-  const retrieveImageAdapter = new RetrieveImagesMalagaFromAWSAdapter();
+  const retrieveImageAdapter = new RetrieveImagesMalagaFromWebAdapter();
   const sendEventAdapter = new SendImageKafka();
   const service = new ScrapeImageService(retrieveImageAdapter, sendEventAdapter);
 

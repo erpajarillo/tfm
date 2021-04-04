@@ -27,6 +27,20 @@ export class Measurements {
                 totalTrucksPollution: Number,
                 totalBusesPollution: Number,
                 totalMotorbikesPollution: Number,
+            },
+            pm2_5Info: {
+                totalVehiclesPM2_5: mongoose.Decimal128,
+                totalCarsPM2_5: mongoose.Decimal128,
+                totalTrucksPM2_5: mongoose.Decimal128,
+                totalBusesPM2_5: mongoose.Decimal128,
+                totalMotorbikesPM2_5: mongoose.Decimal128
+            },
+            pm10Info: {
+                totalVehiclesPM10: mongoose.Decimal128,
+                totalCarsPM10: mongoose.Decimal128,
+                totalTrucksPM10: mongoose.Decimal128,
+                totalBusesPM10: mongoose.Decimal128,
+                totalMotorbikesPM10: mongoose.Decimal128
             }
         });
 
@@ -125,6 +139,36 @@ export class Measurements {
                 },
                 totalMotorbikesPollution: {
                     $sum: "$pollutionInfo.totalMotorbikesPollution"
+                },
+                totalVehiclesPM2_5: {
+                    $sum: "$pollutionInfo.totalVehiclesPM2_5"
+                },
+                totalCarsPM2_5: {
+                    $sum: "$pollutionInfo.totalCarsPM2_5"
+                },
+                totalTrucksPM2_5: {
+                    $sum: "$pollutionInfo.totalTrucksPM2_5"
+                },
+                totalBusesPM2_5: {
+                    $sum: "$pollutionInfo.totalBusesPM2_5"
+                },
+                totalMotorbikesPM2_5: {
+                    $sum: "$pollutionInfo.totalMotorbikesPM2_5"
+                },
+                totalVehiclesPM10: {
+                    $sum: "$pollutionInfo.totalVehiclesPM10"
+                },
+                totalCarsPM10: {
+                    $sum: "$pollutionInfo.totalCarsPM10"
+                },
+                totalTrucksPM10: {
+                    $sum: "$pollutionInfo.totalTrucksPM10"
+                },
+                totalBusesPM10: {
+                    $sum: "$pollutionInfo.totalBusesPM10"
+                },
+                totalMotorbikesPM10: {
+                    $sum: "$pollutionInfo.totalMotorbikesPM10"
                 },
             }
         }

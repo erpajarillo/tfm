@@ -13,6 +13,9 @@ export class pollutionCalculator {
     private readonly CO2Buses;
     private readonly CO2Motorbikes;
 
+    private readonly PM2_5Vehicles;
+    private readonly PM10Vehicles;
+
     constructor() {
         this.kafka = new Kafka({
             clientId: `${config.KafkaClient}`,
@@ -26,6 +29,10 @@ export class pollutionCalculator {
         this.CO2Trucks = 161;
         this.CO2Buses = 75;
         this.CO2Motorbikes = 107;
+
+        /** https://www.adeq.state.ar.us/air/planning/ozone/cars.aspx */
+        this.PM2_5Vehicles = 0.0041;
+        this.PM10Vehicles = 0.0044;
     }
 
     calculate = async (): Promise<calculatePollutionResponseInterface> => {
@@ -36,8 +43,10 @@ export class pollutionCalculator {
             eachMessage: async ({topic, partition, message}) => {
                 kafkaData = {value: message.value, headers: message.headers};
 
-                const contaminationData = this.calculateCO2(kafkaData);
-                const kafkaHeaderResponse = {...kafkaData.headers, ...contaminationData};
+                const CO2Data = this.calculateCO2(kafkaData);
+                const PM2_5Data = this.calculatePM2_5(kafkaData);
+                const PM10Data = this.calculatePM10(kafkaData);
+                const kafkaHeaderResponse = {...kafkaData.headers, ...CO2Data, ...PM2_5Data, ...PM10Data};
 
                 await this.kafkaProducer('pollution', kafkaHeaderResponse);
                 console.log(kafkaHeaderResponse);
@@ -60,6 +69,38 @@ export class pollutionCalculator {
             totalTrucksPollution: totalTrucksPollution.toString(),
             totalBusesPollution: totalBusesPollution.toString(),
             totalMotorbikesPollution: totalMotorbikesPollution.toString()
+        };
+    }
+
+    private calculatePM2_5 = (kafkaData: any) => {
+        const totalVehiclesPM2_5 = Number(kafkaData.headers.totalVehicles) * this.PM2_5Vehicles;
+        const totalCarsPM2_5 = Number(kafkaData.headers.totalCars) * this.PM2_5Vehicles;
+        const totalTrucksPM2_5 = Number(kafkaData.headers.totalTrucks) * this.PM2_5Vehicles;
+        const totalBusesPM2_5 = Number(kafkaData.headers.totalBuses) * this.PM2_5Vehicles;
+        const totalMotorbikesPM2_5 = Number(kafkaData.headers.totalMotorbikes) * this.PM2_5Vehicles;
+
+        return {
+            totalVehiclesPM2_5: totalVehiclesPM2_5.toString(),
+            totalCarsPM2_5: totalCarsPM2_5.toString(),
+            totalTrucksPM2_5: totalTrucksPM2_5.toString(),
+            totalBusesPM2_5: totalBusesPM2_5.toString(),
+            totalMotorbikesPM2_5: totalMotorbikesPM2_5.toString()
+        };
+    }
+
+    private calculatePM10 = (kafkaData: any) => {
+        const totalVehiclesPM10 = Number(kafkaData.headers.totalVehicles) * this.PM10Vehicles;
+        const totalCarsPM10 = Number(kafkaData.headers.totalCars) * this.PM10Vehicles;
+        const totalTrucksPM10 = Number(kafkaData.headers.totalTrucks) * this.PM10Vehicles;
+        const totalBusesPM10 = Number(kafkaData.headers.totalBuses) * this.PM10Vehicles;
+        const totalMotorbikesPM10 = Number(kafkaData.headers.totalMotorbikes) * this.PM10Vehicles;
+
+        return {
+            totalVehiclesPM10: totalVehiclesPM10.toString(),
+            totalCarsPM10: totalCarsPM10.toString(),
+            totalTrucksPM10: totalTrucksPM10.toString(),
+            totalBusesPM10: totalBusesPM10.toString(),
+            totalMotorbikesPM10: totalMotorbikesPM10.toString()
         };
     }
 

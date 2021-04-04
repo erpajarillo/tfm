@@ -20,6 +20,20 @@ const dataSchema = new Schema({
         totalTrucksPollution: Number,
         totalBusesPollution: Number,
         totalMotorbikesPollution: Number,
+    },
+    pm2_5Info: {
+        totalVehiclesPM2_5: Number,
+        totalCarsPM2_5: Number,
+        totalTrucksPM2_5: Number,
+        totalBusesPM2_5: Number,
+        totalMotorbikesPM2_5: Number
+    },
+    pm10Info: {
+        totalVehiclesPM10: Number,
+        totalCarsPM10: Number,
+        totalTrucksPM10: Number,
+        totalBusesPM10: Number,
+        totalMotorbikesPM10: Number
     }
 });
 

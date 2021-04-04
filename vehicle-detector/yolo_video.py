@@ -39,7 +39,7 @@ def detect_img(yolo):
 
             # Mostrar imagen o datos
             r_image = yolo.detect_image(image)
-            r_image.show()
+            # r_image.show()
 
             # Preparar datos para enviar a Kafka
             total = r_image['car'] + r_image['truck'] + r_image['bus'] + r_image['motorbike']

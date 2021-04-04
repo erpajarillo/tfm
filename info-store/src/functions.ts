@@ -68,6 +68,16 @@ export class infoStore {
         const totalTrucksPollution = Number(kafkaData.headers.totalTrucksPollution);
         const totalBusesPollution = Number(kafkaData.headers.totalBusesPollution);
         const totalMotorbikesPollution = Number(kafkaData.headers.totalMotorbikesPollution);
+        const totalVehiclesPM2_5 = Number(kafkaData.headers.totalVehiclesPM2_5);
+        const totalCarsPM2_5 = Number(kafkaData.headers.totalCarsPM2_5);
+        const totalTrucksPM2_5 = Number(kafkaData.headers.totalTrucksPM2_5);
+        const totalBusesPM2_5 = Number(kafkaData.headers.totalBusesPM2_5);
+        const totalMotorbikesPM2_5 = Number(kafkaData.headers.totalMotorbikesPM2_5);
+        const totalVehiclesPM10 = Number(kafkaData.headers.totalVehiclesPM10);
+        const totalCarsPM10 = Number(kafkaData.headers.totalCarsPM10);
+        const totalTrucksPM10 = Number(kafkaData.headers.totalTrucksPM10);
+        const totalBusesPM10 = Number(kafkaData.headers.totalBusesPM10);
+        const totalMotorbikesPM10 = Number(kafkaData.headers.totalMotorbikesPM10);
 
         return {
             imgName,
@@ -87,6 +97,20 @@ export class infoStore {
                 totalTrucksPollution,
                 totalBusesPollution,
                 totalMotorbikesPollution
+            },
+            pm2_5Info: {
+                totalVehiclesPM2_5,
+                totalCarsPM2_5,
+                totalTrucksPM2_5,
+                totalBusesPM2_5,
+                totalMotorbikesPM2_5
+            },
+            pm10Info: {
+                totalVehiclesPM10,
+                totalCarsPM10,
+                totalTrucksPM10,
+                totalBusesPM10,
+                totalMotorbikesPM10
             }
         };
     }
