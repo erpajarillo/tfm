@@ -1,15 +1,15 @@
-import {imgScrapper} from './functions';
+import { imgScrapper } from "./functions";
 
 const imgScrap = new imgScrapper();
 
 const init = async () => {
-    await imgScrap.scrape();
-}
+  await imgScrap.scrape();
+};
 
 init()
-    .then(() => {
-        console.log('OK');
-    })
-    .catch(err => {
-        console.log(err);
-    })
+  .then(() => {
+    console.log("OK");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
